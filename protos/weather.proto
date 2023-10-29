@@ -1,0 +1,37 @@
+syntax = "proto3";
+
+package weather;
+
+service Weather {
+  rpc getDetails (WeatherRequest) returns (WeatherResponse) {} // unary call
+  rpc updateTemperature (stream TemperatureUpdateRequest) returns (WeatherResponse) {} // client streaming
+  rpc getTemperatureUpdates (WeatherRequest) returns (stream WeatherResponse) {} //server streaming
+  rpc weatherChat(stream ChatMessage) returns (stream ChatResponse) {} // bidirectional streaming
+}
+
+message TemperatureUpdateRequest {
+  int32 temperature = 1;
+  string region = 2;
+}
+
+message WeatherRequest {
+  string region = 1;
+}
+
+message WeatherResponse{
+  WeatherDetails message = 1;
+}
+
+message WeatherDetails {
+  int32 id = 1;
+  string region = 2;
+  int32 temperature = 3; 
+}
+
+message ChatMessage {
+  string message = 1;
+}
+
+message ChatResponse {
+  string message = 1;
+}
