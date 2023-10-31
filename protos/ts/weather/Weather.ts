@@ -9,19 +9,19 @@ import type { WeatherRequest as _weather_WeatherRequest, WeatherRequest__Output 
 import type { WeatherResponse as _weather_WeatherResponse, WeatherResponse__Output as _weather_WeatherResponse__Output } from '../weather/WeatherResponse';
 
 export interface WeatherClient extends grpc.Client {
-  getDetails(argument: _weather_WeatherRequest, metadata: grpc.Metadata, options: grpc.CallOptions, callback: grpc.requestCallback<_weather_WeatherResponse__Output>): grpc.ClientUnaryCall;
-  getDetails(argument: _weather_WeatherRequest, metadata: grpc.Metadata, callback: grpc.requestCallback<_weather_WeatherResponse__Output>): grpc.ClientUnaryCall;
-  getDetails(argument: _weather_WeatherRequest, options: grpc.CallOptions, callback: grpc.requestCallback<_weather_WeatherResponse__Output>): grpc.ClientUnaryCall;
-  getDetails(argument: _weather_WeatherRequest, callback: grpc.requestCallback<_weather_WeatherResponse__Output>): grpc.ClientUnaryCall;
-  getDetails(argument: _weather_WeatherRequest, metadata: grpc.Metadata, options: grpc.CallOptions, callback: grpc.requestCallback<_weather_WeatherResponse__Output>): grpc.ClientUnaryCall;
-  getDetails(argument: _weather_WeatherRequest, metadata: grpc.Metadata, callback: grpc.requestCallback<_weather_WeatherResponse__Output>): grpc.ClientUnaryCall;
-  getDetails(argument: _weather_WeatherRequest, options: grpc.CallOptions, callback: grpc.requestCallback<_weather_WeatherResponse__Output>): grpc.ClientUnaryCall;
-  getDetails(argument: _weather_WeatherRequest, callback: grpc.requestCallback<_weather_WeatherResponse__Output>): grpc.ClientUnaryCall;
+  getTemperatureUpdates(argument: _weather_WeatherRequest, metadata: grpc.Metadata, options?: grpc.CallOptions): grpc.ClientReadableStream<_weather_WeatherResponse__Output>;
+  getTemperatureUpdates(argument: _weather_WeatherRequest, options?: grpc.CallOptions): grpc.ClientReadableStream<_weather_WeatherResponse__Output>;
+  getTemperatureUpdates(argument: _weather_WeatherRequest, metadata: grpc.Metadata, options?: grpc.CallOptions): grpc.ClientReadableStream<_weather_WeatherResponse__Output>;
+  getTemperatureUpdates(argument: _weather_WeatherRequest, options?: grpc.CallOptions): grpc.ClientReadableStream<_weather_WeatherResponse__Output>;
   
-  getTemperatureUpdates(argument: _weather_WeatherRequest, metadata: grpc.Metadata, options?: grpc.CallOptions): grpc.ClientReadableStream<_weather_WeatherResponse__Output>;
-  getTemperatureUpdates(argument: _weather_WeatherRequest, options?: grpc.CallOptions): grpc.ClientReadableStream<_weather_WeatherResponse__Output>;
-  getTemperatureUpdates(argument: _weather_WeatherRequest, metadata: grpc.Metadata, options?: grpc.CallOptions): grpc.ClientReadableStream<_weather_WeatherResponse__Output>;
-  getTemperatureUpdates(argument: _weather_WeatherRequest, options?: grpc.CallOptions): grpc.ClientReadableStream<_weather_WeatherResponse__Output>;
+  getWeatherDetails(argument: _weather_WeatherRequest, metadata: grpc.Metadata, options: grpc.CallOptions, callback: grpc.requestCallback<_weather_WeatherResponse__Output>): grpc.ClientUnaryCall;
+  getWeatherDetails(argument: _weather_WeatherRequest, metadata: grpc.Metadata, callback: grpc.requestCallback<_weather_WeatherResponse__Output>): grpc.ClientUnaryCall;
+  getWeatherDetails(argument: _weather_WeatherRequest, options: grpc.CallOptions, callback: grpc.requestCallback<_weather_WeatherResponse__Output>): grpc.ClientUnaryCall;
+  getWeatherDetails(argument: _weather_WeatherRequest, callback: grpc.requestCallback<_weather_WeatherResponse__Output>): grpc.ClientUnaryCall;
+  getWeatherDetails(argument: _weather_WeatherRequest, metadata: grpc.Metadata, options: grpc.CallOptions, callback: grpc.requestCallback<_weather_WeatherResponse__Output>): grpc.ClientUnaryCall;
+  getWeatherDetails(argument: _weather_WeatherRequest, metadata: grpc.Metadata, callback: grpc.requestCallback<_weather_WeatherResponse__Output>): grpc.ClientUnaryCall;
+  getWeatherDetails(argument: _weather_WeatherRequest, options: grpc.CallOptions, callback: grpc.requestCallback<_weather_WeatherResponse__Output>): grpc.ClientUnaryCall;
+  getWeatherDetails(argument: _weather_WeatherRequest, callback: grpc.requestCallback<_weather_WeatherResponse__Output>): grpc.ClientUnaryCall;
   
   updateTemperature(metadata: grpc.Metadata, options: grpc.CallOptions, callback: grpc.requestCallback<_weather_WeatherResponse__Output>): grpc.ClientWritableStream<_weather_TemperatureUpdateRequest>;
   updateTemperature(metadata: grpc.Metadata, callback: grpc.requestCallback<_weather_WeatherResponse__Output>): grpc.ClientWritableStream<_weather_TemperatureUpdateRequest>;
@@ -40,9 +40,9 @@ export interface WeatherClient extends grpc.Client {
 }
 
 export interface WeatherHandlers extends grpc.UntypedServiceImplementation {
-  getDetails: grpc.handleUnaryCall<_weather_WeatherRequest__Output, _weather_WeatherResponse>;
-  
   getTemperatureUpdates: grpc.handleServerStreamingCall<_weather_WeatherRequest__Output, _weather_WeatherResponse>;
+  
+  getWeatherDetails: grpc.handleUnaryCall<_weather_WeatherRequest__Output, _weather_WeatherResponse>;
   
   updateTemperature: grpc.handleClientStreamingCall<_weather_TemperatureUpdateRequest__Output, _weather_WeatherResponse>;
   
@@ -51,8 +51,8 @@ export interface WeatherHandlers extends grpc.UntypedServiceImplementation {
 }
 
 export interface WeatherDefinition extends grpc.ServiceDefinition {
-  getDetails: MethodDefinition<_weather_WeatherRequest, _weather_WeatherResponse, _weather_WeatherRequest__Output, _weather_WeatherResponse__Output>
   getTemperatureUpdates: MethodDefinition<_weather_WeatherRequest, _weather_WeatherResponse, _weather_WeatherRequest__Output, _weather_WeatherResponse__Output>
+  getWeatherDetails: MethodDefinition<_weather_WeatherRequest, _weather_WeatherResponse, _weather_WeatherRequest__Output, _weather_WeatherResponse__Output>
   updateTemperature: MethodDefinition<_weather_TemperatureUpdateRequest, _weather_WeatherResponse, _weather_TemperatureUpdateRequest__Output, _weather_WeatherResponse__Output>
   weatherChat: MethodDefinition<_weather_ChatMessage, _weather_ChatResponse, _weather_ChatMessage__Output, _weather_ChatResponse__Output>
 }

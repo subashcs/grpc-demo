@@ -3,7 +3,7 @@ syntax = "proto3";
 package weather;
 
 service Weather {
-  rpc getDetails (WeatherRequest) returns (WeatherResponse) {} // unary call
+  rpc getWeatherDetails (WeatherRequest) returns (WeatherResponse) {} // unary call
   rpc updateTemperature (stream TemperatureUpdateRequest) returns (WeatherResponse) {} // client streaming
   rpc getTemperatureUpdates (WeatherRequest) returns (stream WeatherResponse) {} //server streaming
   rpc weatherChat(stream ChatMessage) returns (stream ChatResponse) {} // bidirectional streaming
@@ -19,7 +19,7 @@ message WeatherRequest {
 }
 
 message WeatherResponse{
-  WeatherDetails message = 1;
+  repeated WeatherDetails message = 1;
 }
 
 message WeatherDetails {

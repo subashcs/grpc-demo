@@ -1,9 +1,7 @@
 import { ProtoGrpcType } from "./protos/ts/weather";
 import readline from "readline";
-const protoLoader = require("@grpc/proto-loader");
-
-const grpcLibrary = require("@grpc/grpc-js");
-
+import * as protoLoader from "@grpc/proto-loader";
+import * as grpcLibrary from "@grpc/grpc-js";
 const protoFileName = "./protos/weather.proto";
 
 const options = {
@@ -17,8 +15,7 @@ const options = {
 const packageDefinition = protoLoader.loadSync(protoFileName, options);
 const packageObject = grpcLibrary.loadPackageDefinition(
   packageDefinition
-) as ProtoGrpcType;
-
+) as unknown as ProtoGrpcType;
 const weatherPackage = packageObject.weather;
 
 function main() {
@@ -38,15 +35,24 @@ function main() {
     onReady();
   });
 
+  const reader = readline.createInterface({
+    input: process.stdin,
+    output: process.stdout,
+  });
+
+  /**
+   * Fetches the latest temperature updates from the server
+   * for the requested location (region)
+   */
   function serverTemperatureStreamer() {
     const serverTemperatureStream = client.getTemperatureUpdates({
       region: "Baglung",
     });
     serverTemperatureStream.on("data", (data: any) => {
-      console.log("Server Streaming:", data);
+      console.log("Received weather update:", data);
     });
     serverTemperatureStream.on("end", () => {
-      console.log("temperature getter communication ended");
+      console.log("Server finished sending weather updates");
     });
   }
 
@@ -56,7 +62,7 @@ function main() {
         if (err) {
           console.log("Error:", err);
         }
-        console.log("Client Temperature Streaming RPC Result:", result);
+        console.log("Final data after updates:", result);
       }
     );
 
@@ -77,23 +83,43 @@ function main() {
     clientTemperatureUpdateStream.end();
   }
 
-  function detailsGetter() {
-    client.getDetails({ region: "Baglung" }, (err, result) => {
+  function getWeatherDetails() {
+    console.log("Requesting weather data of Baglung district...");
+    client.getWeatherDetails({ region: "Baglung" }, (err, result) => {
       if (err) {
         console.log(err);
         return;
       }
-      console.log("got response", result);
+      console.log("Got weather result:", result);
     });
   }
 
-  function clientChatService() {
-    const reader = readline.createInterface({
-      input: process.stdin,
-      output: process.stdout,
+  function askQuestionWithOptions(
+    reader: readline.Interface,
+    question: string,
+    options: any[]
+  ) {
+    return new Promise((resolve, reject) => {
+      const formattedOptions = options
+        .map((option: any, index: number) => `${index + 1}. ${option}`)
+        .join("\n");
+      reader.question(
+        `${question}\n${formattedOptions}\nSelect an option: `,
+        (answer: string) => {
+          const selectedOption = parseInt(answer);
+          if (selectedOption >= 1 && selectedOption <= options.length) {
+            resolve(options[selectedOption - 1]);
+          } else {
+            reject(new Error("Invalid option selected."));
+          }
+        }
+      );
     });
-    const metadata = new grpcLibrary.Metadata();
+  }
 
+  async function clientChatService() {
+    const metadata = new grpcLibrary.Metadata();
+    try {
       reader.question("Enter your username:\n", (name) => {
         console.log(`Hello ${name}`);
         metadata.set("username", name);
@@ -111,21 +137,52 @@ function main() {
             call.write({ message: line });
           }
         });
-      })
+      });
+    } catch (error: any) {
+      console.error(error.message);
+    } finally {
+      reader.close();
+    }
   }
 
-  function onReady() {
-    // Unary RPC
-    // detailsGetter();
+  async function onReady() {
+    const question = "Choose a RPC type demo?";
+    const options = [
+      "Unary RPC - temperature details by region",
+      "Server Streaming - regular temperature updates from server",
+      "Client Streaming - update temperature regularly",
+      "Bidirectional Streaming - group chat service",
+    ];
 
-    // Server Streaming RPC
-    // serverTemperatureStreamer();
-
-    // Client Streaming RPC
-    // clientTemperatureUpdateStreamer();
-
-    // Bidirectional Streaming Chat
-    clientChatService();
+    const rpcType = await askQuestionWithOptions(reader, question, options) as string;
+    console.log(`------------------------`);
+    console.log(`You selected: ${rpcType}`);
+    console.log(`------------------------`);
+    switch (rpcType) {
+      case options[0]: {
+        // Unary RPC
+        getWeatherDetails();
+        break;
+      }
+      case options[1]: {
+        // Server Streaming RPC
+        serverTemperatureStreamer();
+        break;
+      }
+      case options[2]: {
+        // Client Streaming RPC
+        clientTemperatureUpdateStreamer();
+        break;
+      }
+      case options[3]: {
+        // Bidirectional Streaming Chat
+        await clientChatService();
+        break;
+      }
+      default: {
+        console.log("None selected");
+      }
+    }
   }
 }
 
