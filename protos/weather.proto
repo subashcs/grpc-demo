@@ -34,4 +34,5 @@ message ChatMessage {
 
 message ChatResponse {
   string message = 1;
+  string username = 2;
 }

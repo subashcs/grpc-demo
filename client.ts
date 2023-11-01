@@ -117,19 +117,19 @@ function main() {
     });
   }
 
-  async function clientChatService() {
+  function clientChatService() {
     const metadata = new grpcLibrary.Metadata();
     try {
       reader.question("Enter your username:\n", (name) => {
-        console.log(`Hello ${name}`);
+        console.log(`Hello ${name}, Write your message:`);
         metadata.set("username", name);
         const call = client.weatherChat(metadata);
         call.write({ message: "register" });
 
         call.on("data", (data) => {
-          console.log("Chat message:", data.message);
+          console.log(`${data.username}:`, data.message);
         });
-
+        
         reader.on("line", (line) => {
           if (line == "quit") {
             call.end();
@@ -140,9 +140,7 @@ function main() {
       });
     } catch (error: any) {
       console.error(error.message);
-    } finally {
-      reader.close();
-    }
+    } 
   }
 
   async function onReady() {
@@ -176,7 +174,7 @@ function main() {
       }
       case options[3]: {
         // Bidirectional Streaming Chat
-        await clientChatService();
+        clientChatService();
         break;
       }
       default: {
